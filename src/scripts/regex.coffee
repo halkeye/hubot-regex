@@ -55,7 +55,7 @@ class RegexHistoryEntry
 
 module.exports = (robot) ->
 
-  options = 
+  options =
     lines_to_keep:  process.env.HUBOT_REGEX_HISTORY_LINES
 
   unless options.lines_to_keep
@@ -65,18 +65,15 @@ module.exports = (robot) ->
 
   robot.hear /(.*)/i, (msg) ->
     if ! msg.message.text.match /^s\/(.*)\/(.*)\//
-        historyentry = new RegexHistoryEntry(msg.message.user.name, msg.match[1])
-        history.add historyentry
+      history.add new RegexHistoryEntry(msg.message.user.name, msg.match[1])
 
-  robot.hear /^s\/(.*)\/(.*)\//, (msg) ->
-    re_src = msg.match[1]
+  robot.hear /^s\/(.+)\/(.+)\/(g|i)?/, (msg) ->
     re_repl = msg.match[2]
-    hist = history.raw().reverse()
-    foundit = false
-    hist.forEach (histentry) ->
-        return if foundit
-        hmsg = histentry.message
-        if hmsg.match re_src
-            result = hmsg.replace re_src, re_repl
-            msg.send "<" + histentry.name + "> " + result
-            foundit = true
+    re_src = new RegExp msg.match[1], msg.match[3]
+
+    history.raw().reverse().every (histentry) ->
+      hmsg = histentry.message
+      if re_src.test hmsg
+        result = hmsg.replace re_src, re_repl
+        msg.send "<" + histentry.name + "> " + result
+        return false

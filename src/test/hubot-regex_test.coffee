@@ -1,6 +1,6 @@
 'use strict'
 
-hubot_regex = require('../lib/hubot-regex.js')
+hubot_regex = require('../scripts/regex.js')
 
 ###
 ======== A Handy Little Mocha Reference ========
@@ -52,9 +52,58 @@ Should assertions:
   user.should.be.a('object').and.have.property('name', 'tj')
 ###
 
+bot = {}
+bot.brain = {}
+bot.brain.data = {}
+bot.brain.data.regexhistory = [
+]
+bot.logger = {}
+bot.logger.info = (msg) -> console.log(msg)
+bot.brain.on = (event, cb)->
+  console.log(event)
+  cb()
+
+bot.hears = []
+bot.send = (msg) ->
+  console.log(msg)
+
+bot.add_message = (user, text) ->
+  msg = {
+    message: {
+      text: text
+      user: { name: user }
+    },
+    send: bot.send
+  }
+  msg.match = null
+  @hears.forEach (hear) ->
+    msg.match = msg.message.text.match(hear[0])
+    if msg.match
+      hear[1](msg)
+
+bot.hear = (regex, cb) ->
+  @hears.push [ regex, cb ]
+
+plugin = new hubot_regex(bot)
+
 describe 'Awesome', ()->
   describe '#of()', ()->
 
     it 'awesome', ()->
-      hubot_regex.awesome().should.eql('awesome')
+      # before -> clear history
+      bot.add_message 'halkeye', 'yo'
+      bot.add_message 'halkeye', 's/yo/gavin/'
+      # fixme, fix bot.send so we can check output
+
+      bot.add_message 'halkeye', 'yo1 yo2 yo3'
+      bot.add_message 'halkeye', 's/yo(\\d+)/$1-gavin/'
+      # fixme, fix bot.send so we can check output
+
+      bot.add_message 'halkeye', 'yo1 yo2 yo3'
+      bot.add_message 'halkeye', 's/yo(\\d+)/$1-gavin/g'
+      # fixme, fix bot.send so we can check output
+
+      bot.add_message 'halkeye', 'yo1 yo2 yo3'
+      bot.add_message 'halkeye', 's/(.)/1-$1/g'
+      # fixme, fix bot.send so we can check output
 
