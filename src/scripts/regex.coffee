@@ -51,7 +51,7 @@ module.exports = (robot) ->
     if ! msg.message.text.match /^s\/(.*)\/(.*)\//
       history.add new RegexHistoryEntry(msg.message.user.name, msg.match[1])
 
-  robot.hear /^s\/(.+)\/(.+)\/(g|i)?/, (msg) ->
+  robot.hear /^s\/(.+)\/(.+)\/([g|i]*)?$/, (msg) ->
     re_repl = msg.match[2]
     re_src = new RegExp msg.match[1], msg.match[3]
 
