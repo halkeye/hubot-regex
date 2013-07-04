@@ -61,6 +61,8 @@ module.exports = (robot) ->
         result = hmsg.replace re_src, re_repl
         msg.send "<" + histentry.name + "> " + result
         return false
+      else
+        return true
 
   this.rawHistory = () ->
     history.raw()
