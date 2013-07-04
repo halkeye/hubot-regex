@@ -24,19 +24,8 @@ class RegexHistory
 
   add: (message) ->
     @cache.unshift message
-    while @cache.length > @keep
-      @cache.pop()
+    @cache.splice @keep
     @robot.brain.data.regexhistory = @cache
-
-  show: (lines) ->
-    if (lines > @cache.length)
-      lines = @cache.length
-    reply = 'Showing ' + lines + ' lines of history:\n'
-    reply = reply + @entryToString(message) + '\n' for message in @cache[-lines..]
-    return reply
-
-  entryToString: (event) ->
-    return '[' + event.hours + ':' + event.minutes + '] ' + event.name + ': ' + event.message
 
   raw: ->
     return @cache
@@ -47,11 +36,6 @@ class RegexHistory
 
 class RegexHistoryEntry
   constructor: (@name, @message) ->
-    @time = new Date()
-    @hours = @time.getHours()
-    @minutes = @time.getMinutes()
-    if @minutes < 10
-      @minutes = '0' + @minutes
 
 module.exports = (robot) ->
 
@@ -77,3 +61,9 @@ module.exports = (robot) ->
         result = hmsg.replace re_src, re_repl
         msg.send "<" + histentry.name + "> " + result
         return false
+
+  this.rawHistory = () ->
+    history.raw()
+
+  return this
+

@@ -52,58 +52,95 @@ Should assertions:
   user.should.be.a('object').and.have.property('name', 'tj')
 ###
 
-bot = {}
-bot.brain = {}
-bot.brain.data = {}
-bot.brain.data.regexhistory = [
-]
-bot.logger = {}
-bot.logger.info = (msg) -> console.log(msg)
-bot.brain.on = (event, cb)->
-  console.log(event)
-  cb()
+class Bot
+  constructor: () ->
+    @brain = {
+      data: {},
+    }
+    @brain.on = (event, cb)->
+      console.log(event)
+      cb()
 
-bot.hears = []
-bot.send = (msg) ->
-  console.log(msg)
+    @logger = {
+      info: (msg) -> console.log("Logger - Info", msg)
+    }
+    @hears = []
 
-bot.add_message = (user, text) ->
-  msg = {
-    message: {
-      text: text
-      user: { name: user }
-    },
-    send: bot.send
-  }
-  msg.match = null
-  @hears.forEach (hear) ->
-    msg.match = msg.message.text.match(hear[0])
-    if msg.match
-      hear[1](msg)
+  hear: (regex, cb) ->
+    @hears.push [ regex, cb ]
 
-bot.hear = (regex, cb) ->
-  @hears.push [ regex, cb ]
+  send: (msg) ->
+    @output.push msg 
 
-plugin = new hubot_regex(bot)
+  add_message: (user, text) ->
+    msg = {
+      message: {
+        text: text
+        user: { name: user }
+      },
+      send: @send
+    }
+    msg.match = null
+    @hears.forEach (hear) ->
+      msg.match = msg.message.text.match(hear[0])
+      if msg.match
+        hear[1](msg)
+
+describe 'history', ()->
+  beforeEach () ->
+    process.env.HUBOT_REGEX_HISTORY_LINES = 4
+    @bot = new Bot()
+    @plugin = new hubot_regex(@bot)
+
+  it 'addOneLine', () ->
+    @bot.add_message 'halkeye', 'msg1'
+    [{ name: 'halkeye', message: 'msg1' }].should.eql(@plugin.rawHistory())
+
+  it 'addMultipleLine', () ->
+    @bot.add_message 'halkeye', 'msg1'
+    @bot.add_message 'halkeye', 'msg2'
+    @bot.add_message 'halkeye', 'msg3'
+    [
+      { name: 'halkeye', message: 'msg3' },
+      { name: 'halkeye', message: 'msg2' },
+      { name: 'halkeye', message: 'msg1' },
+    ].should.eql(@plugin.rawHistory())
+
+  it 'addTruncateLines', () ->
+    @plugin.clearHistory
+    @bot.add_message 'halkeye', 'msg1'
+    @bot.add_message 'halkeye', 'msg2'
+    @bot.add_message 'halkeye', 'msg3'
+    @bot.add_message 'halkeye', 'msg4'
+    @bot.add_message 'halkeye', 'msg5'
+    [
+      { name: 'halkeye', message: 'msg5' },
+      { name: 'halkeye', message: 'msg4' },
+      { name: 'halkeye', message: 'msg3' },
+      { name: 'halkeye', message: 'msg2' },
+    ].should.eql(@plugin.rawHistory())
 
 describe 'Awesome', ()->
-  describe '#of()', ()->
+  beforeEach () ->
+    @bot = new Bot()
+    @plugin = new hubot_regex(@bot)
 
-    it 'awesome', ()->
-      # before -> clear history
-      bot.add_message 'halkeye', 'yo'
-      bot.add_message 'halkeye', 's/yo/gavin/'
-      # fixme, fix bot.send so we can check output
+  it 'default search replace', ()->
+    @bot.add_message 'halkeye', 'yo'
+    @bot.add_message 'halkeye', 's/yo/gavin/'
+    @bot.output.should.eq(['gavin'])
 
-      bot.add_message 'halkeye', 'yo1 yo2 yo3'
-      bot.add_message 'halkeye', 's/yo(\\d+)/$1-gavin/'
-      # fixme, fix bot.send so we can check output
+      # fixme, fix @bot.send so we can check output
 
-      bot.add_message 'halkeye', 'yo1 yo2 yo3'
-      bot.add_message 'halkeye', 's/yo(\\d+)/$1-gavin/g'
-      # fixme, fix bot.send so we can check output
+      @bot.add_message 'halkeye', 'yo1 yo2 yo3'
+      @bot.add_message 'halkeye', 's/yo(\\d+)/$1-gavin/'
+      # fixme, fix @bot.send so we can check output
 
-      bot.add_message 'halkeye', 'yo1 yo2 yo3'
-      bot.add_message 'halkeye', 's/(.)/1-$1/g'
+      @bot.add_message 'halkeye', 'yo1 yo2 yo3'
+      @bot.add_message 'halkeye', 's/yo(\\d+)/$1-gavin/g'
+      # fixme, fix @bot.send so we can check output
+
+      @bot.add_message 'halkeye', 'yo1 yo2 yo3'
+      @bot.add_message 'halkeye', 's/(.)/1-$1/g'
       # fixme, fix bot.send so we can check output
 

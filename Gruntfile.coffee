@@ -55,6 +55,7 @@ module.exports = (grunt)->
         ]
         options:
           globals: ['should']
+          bail: true
           timeout: 3000
           ignoreLeaks: false
           #grep: '**/*.js'
