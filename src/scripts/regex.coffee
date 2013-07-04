@@ -23,9 +23,9 @@ class RegexHistory
         @cache = @robot.brain.data.regexhistory
 
   add: (message) ->
-    @cache.push message
+    @cache.unshift message
     while @cache.length > @keep
-      @cache.shift()
+      @cache.pop()
     @robot.brain.data.regexhistory = @cache
 
   show: (lines) ->
@@ -71,7 +71,7 @@ module.exports = (robot) ->
     re_repl = msg.match[2]
     re_src = new RegExp msg.match[1], msg.match[3]
 
-    history.raw().reverse().every (histentry) ->
+    history.raw().every (histentry) ->
       hmsg = histentry.message
       if re_src.test hmsg
         result = hmsg.replace re_src, re_repl
