@@ -170,4 +170,9 @@ describe 'Replace Tests', ()->
     @bot.add_message 'halkeye', 'msg5'
     @bot.add_message 'halkeye', 's/msg4/gavin/'
     @bot.output.should.eql ['<halkeye> gavin msg4' ]
+  
+  it "empty replace", ()->
+    @bot.add_message 'halkeye', "I wasn't tired"
+    @bot.add_message 'halkeye', "s/n't//"
+    @bot.output.should.eql ['<halkeye> I was tired' ]
 

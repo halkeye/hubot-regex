@@ -55,8 +55,8 @@ module.exports = (grunt)->
         ]
         options:
           globals: ['should']
-          bail: true
           timeout: 3000
+          bail: true
           ignoreLeaks: false
           #grep: '**/*.js'
           ui: 'bdd'
