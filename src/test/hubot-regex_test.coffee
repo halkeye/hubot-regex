@@ -65,12 +65,13 @@ class Bot
       info: (msg) -> console.log("Logger - Info", msg)
     }
     @hears = []
+    @output = []
 
   hear: (regex, cb) ->
     @hears.push [ regex, cb ]
 
-  send: (msg) ->
-    @output.push msg 
+  send: (msg) =>
+    @output.push msg
 
   add_message: (user, text) ->
     msg = {
@@ -120,27 +121,53 @@ describe 'history', ()->
       { name: 'halkeye', message: 'msg2' },
     ].should.eql(@plugin.rawHistory())
 
-describe 'Awesome', ()->
+describe 'Replace Tests', ()->
   beforeEach () ->
+    process.env.HUBOT_REGEX_HISTORY_LINES = 4
     @bot = new Bot()
     @plugin = new hubot_regex(@bot)
 
   it 'default search replace', ()->
     @bot.add_message 'halkeye', 'yo'
     @bot.add_message 'halkeye', 's/yo/gavin/'
-    @bot.output.should.eq(['gavin'])
+    @bot.output.should.eql ['<halkeye> gavin']
 
-      # fixme, fix @bot.send so we can check output
+  it 'placeholder non global', ()->
+    @bot.add_message 'halkeye', 'yo1 yo2 yo3'
+    @bot.add_message 'halkeye', 's/yo(\\d+)/$1-gavin/'
+    @bot.output.should.eql ['<halkeye> 1-gavin yo2 yo3']
 
-      @bot.add_message 'halkeye', 'yo1 yo2 yo3'
-      @bot.add_message 'halkeye', 's/yo(\\d+)/$1-gavin/'
-      # fixme, fix @bot.send so we can check output
+  it 'placeholder global', ()->
+    @bot.add_message 'halkeye', 'yo1 yo2 yo3'
+    @bot.add_message 'halkeye', 's/yo(\\d+)/$1-gavin/g'
+    @bot.output.should.eql ['<halkeye> 1-gavin 2-gavin 3-gavin']
 
-      @bot.add_message 'halkeye', 'yo1 yo2 yo3'
-      @bot.add_message 'halkeye', 's/yo(\\d+)/$1-gavin/g'
-      # fixme, fix @bot.send so we can check output
+  it 'anything placeholder global', ()->
+    @bot.add_message 'halkeye', 'yo1 yo2 yo3'
+    @bot.add_message 'halkeye', 's/(.)/1-$1/g'
+    @bot.output.should.eql ['<halkeye> 1-y1-o1-11- 1-y1-o1-21- 1-y1-o1-3']
 
-      @bot.add_message 'halkeye', 'yo1 yo2 yo3'
-      @bot.add_message 'halkeye', 's/(.)/1-$1/g'
-      # fixme, fix bot.send so we can check output
+  it 'simple case sensitive (nonmatch)', ()->
+    @bot.add_message 'halkeye', 'YO'
+    @bot.add_message 'halkeye', 's/yo/gavin/'
+    @bot.output.should.eql []
+
+  it 'simple case sensitive', ()->
+    @bot.add_message 'halkeye', 'YO'
+    @bot.add_message 'halkeye', 's/yo/gavin/i'
+    @bot.output.should.eql ['<halkeye> gavin' ]
+
+  it 'simple case sensitive global', ()->
+    @bot.add_message 'halkeye', 'YO yo'
+    @bot.add_message 'halkeye', 's/yo/gavin/ig'
+    @bot.output.should.eql ['<halkeye> gavin gavin' ]
+
+  it 'trimmed match', ()->
+    @bot.add_message 'halkeye', 'msg1'
+    @bot.add_message 'halkeye', 'msg2'
+    @bot.add_message 'halkeye', 'msg3'
+    @bot.add_message 'halkeye', 'msg4 msg4'
+    @bot.add_message 'halkeye', 'msg5'
+    @bot.add_message 'halkeye', 's/msg4/gavin/'
+    @bot.output.should.eql ['<halkeye> gavin msg4' ]
 
