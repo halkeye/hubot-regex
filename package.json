@@ -39,6 +39,6 @@
     "grunt": "~0.4.1"
   },
   "keywords": [
-    "hubot"
+    "hubot", "hubot-scripts"
   ]
 }
