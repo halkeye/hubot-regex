@@ -39,6 +39,10 @@
     "grunt": "~1.0.1"
   },
   "keywords": [
-    "hubot", "hubot-scripts"
-  ]
+    "hubot",
+    "hubot-scripts"
+  ],
+  "dependencies": {
+    "coffeescript": "^2.5.1"
+  }
 }
