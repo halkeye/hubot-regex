@@ -36,7 +36,7 @@
     "grunt-coffeelint": "~0.0.6",
     "grunt-simple-mocha": "~0.4.0",
     "should": "~13.2.0",
-    "grunt": "~1.1.0"
+    "grunt": "~1.2.0"
   },
   "keywords": [
     "hubot", "hubot-scripts"
