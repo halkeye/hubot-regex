@@ -1,5 +1,7 @@
 # hubot-regex
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/halkeye/hubot-regex.svg)](https://greenkeeper.io/)
+
 Substitutes regexes said in the current channel
 
 ## Getting Started
