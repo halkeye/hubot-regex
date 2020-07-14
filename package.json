@@ -20,7 +20,7 @@
       "url": "https://github.com/leftybc/hubot-regex/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "src/scripts/regex.coffee",
+  "main": "src/scripts/regex.js",
   "engines": {
     "node": ">= 4"
   },
@@ -28,21 +28,18 @@
     "test": "grunt simplemocha"
   },
   "devDependencies": {
-    "grunt-contrib-jshint": "~2.1.0",
+    "eslint": "^7.4.0",
+    "eslint-plugin-mocha": "^7.0.1",
+    "grunt": "~1.2.1",
     "grunt-contrib-watch": "~1.1.0",
-    "grunt-contrib-coffee": "~2.1.0",
-    "grunt-contrib-clean": "~2.0.0",
-    "grunt-contrib-copy": "~1.0.0",
-    "grunt-coffeelint": "~0.0.6",
+    "grunt-eslint": "^23.0.0",
     "grunt-simple-mocha": "~0.4.0",
-    "should": "~13.2.0",
-    "grunt": "~1.2.0"
+    "hubot-test-helper": "^1.9.0",
+    "should": "~13.2.0"
   },
   "keywords": [
     "hubot",
     "hubot-scripts"
   ],
-  "dependencies": {
-    "coffeescript": "^2.5.1"
-  }
+  "dependencies": {}
 }
