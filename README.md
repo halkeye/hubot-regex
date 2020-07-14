@@ -1,7 +1,5 @@
 # hubot-regex
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/halkeye/hubot-regex.svg)](https://greenkeeper.io/)
-
 Substitutes regexes said in the current channel
 
 ## Getting Started
@@ -11,5 +9,6 @@ Substitutes regexes said in the current channel
 3. Profit
 
 ## License
+
 Copyright (c) 2013 Lefty
 Licensed under the MIT license.
