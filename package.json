@@ -22,7 +22,7 @@
   ],
   "main": "src/scripts/regex.js",
   "engines": {
-    "node": ">= 4"
+    "node": ">= 10"
   },
   "scripts": {
     "test": "grunt simplemocha"
