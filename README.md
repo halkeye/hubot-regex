@@ -1,3 +1,5 @@
+# Migrated to https://github.com/halkeye/hubot-plugins/tree/master/packages/hubot-regex
+
 # hubot-regex
 
 Substitutes regexes said in the current channel
